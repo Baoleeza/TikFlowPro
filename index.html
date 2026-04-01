@@ -11,259 +11,430 @@
         tailwind.config = {
             theme: {
                 extend: {
-                    colors: { brand: { 50: '#eff6ff', 500: '#3b82f6', 600: '#2563eb', 900: '#1e3a8a' } }
+                    colors: { 
+                        brand: { 50: '#eff6ff', 400: '#60a5fa', 500: '#3b82f6', 600: '#2563eb', 900: '#1e3a8a' },
+                        dark: { 900: '#0f172a', 950: '#020617' }
+                    },
+                    animation: {
+                        'float': 'float 6s ease-in-out infinite',
+                        'scanline': 'scanline 2s linear infinite',
+                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                    },
+                    keyframes: {
+                        float: { '0%, 100%': { transform: 'translateY(0)' }, '50%': { transform: 'translateY(-10px)' } },
+                        scanline: { '0%': { transform: 'translateY(-100%)' }, '100%': { transform: 'translateY(100%)' } }
+                    }
                 }
             }
         }
     </script>
     <style>
-        .tab-content { display: none; animation: fadeIn 0.4s ease-in-out; }
-        .tab-content.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        .toast { transition: all 0.3s ease; transform: translateX(120%); }
+        body { background-color: #020617; background-image: radial-gradient(circle at 50% 0%, #1e3a8a 0%, transparent 50%); }
+        
+        /* Hiệu ứng kính mờ chuẩn SaaS */
+        .glass-panel { background: rgba(15, 23, 42, 0.65); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.08); }
+        .glass-card { background: linear-gradient(145deg, rgba(30,41,59,0.7) 0%, rgba(15,23,42,0.9) 100%); border: 1px solid rgba(255, 255, 255, 0.05); }
+        
+        /* Input & Form */
+        .glass-input { background: rgba(2, 6, 23, 0.5); border: 1px solid rgba(51, 65, 85, 0.5); color: #f8fafc; transition: all 0.3s ease; }
+        .glass-input:focus { border-color: #3b82f6; box-shadow: 0 0 20px rgba(59, 130, 246, 0.4); outline: none; background: rgba(15, 23, 42, 0.8); }
+        
+        /* Chuyển tab mượt mà */
+        .tab-content { display: none; opacity: 0; transform: translateY(15px); transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1); }
+        .tab-content.active { display: block; opacity: 1; transform: translateY(0); animation: slideUpFade 0.5s ease forwards; }
+        @keyframes slideUpFade { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+        
+        /* Nền phát sáng (Ambient Glow) */
+        .glow-orb { position: fixed; filter: blur(120px); z-index: -1; border-radius: 50%; opacity: 0.15; pointer-events: none; }
+        
+        /* Toast Notification */
+        .toast { transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55); transform: translateX(150%); }
         .toast.show { transform: translateX(0); }
-        .loader { border: 3px solid #f3f3f3; border-top: 3px solid #ffffff; border-radius: 50%; width: 18px; height: 18px; animation: spin 1s linear infinite; display: inline-block; vertical-align: middle; margin-right: 8px;}
+        
+        /* Nút cuộn (Scrollbar) */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #020617; }
+        ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #3b82f6; }
+
+        /* Loader & Progress */
+        .loader { border: 2px solid rgba(255,255,255,0.1); border-top: 2px solid #60a5fa; border-radius: 50%; width: 16px; height: 16px; animation: spin 1s linear infinite; display: inline-block; vertical-align: middle; margin-right: 8px;}
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         .progress-bar-striped { background-image: linear-gradient(45deg,rgba(255,255,255,.15) 25%,transparent 25%,transparent 50%,rgba(255,255,255,.15) 50%,rgba(255,255,255,.15) 75%,transparent 75%,transparent); background-size: 1rem 1rem; }
         .progress-bar-animated { animation: progress-bar-stripes 1s linear infinite; }
         @keyframes progress-bar-stripes { 0% { background-position: 1rem 0; } 100% { background-position: 0 0; } }
+        
+        /* Terminal Effect */
+        .terminal-text::after { content: '_'; animation: blink 1s step-end infinite; }
+        @keyframes blink { 50% { opacity: 0; } }
+        
+        /* Cyber Grid Background */
+        .cyber-grid { background-size: 40px 40px; background-image: linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px), linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px); mask-image: linear-gradient(to bottom, black 30%, transparent 100%); -webkit-mask-image: linear-gradient(to bottom, black 30%, transparent 100%); }
+        
+        /* Button Shine Effect Nâng Cấp */
+        .btn-shine { position: relative; overflow: hidden; }
+        .btn-shine::before { content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(to right, transparent, rgba(255,255,255,0.4), transparent); transform: skewX(-25deg); animation: shine 3.5s cubic-bezier(0.4, 0, 0.2, 1) infinite; z-index: 1; }
+        @keyframes shine { 0%, 20% { left: -100%; } 80%, 100% { left: 200%; } }
     </style>
 </head>
-<body class="bg-slate-50 text-slate-800 font-sans min-h-screen flex flex-col items-center pt-10 px-4 pb-20">
+<body class="text-slate-300 font-sans min-h-screen flex flex-col items-center pt-10 px-4 pb-20 relative overflow-x-hidden selection:bg-brand-500/40">
 
-    <div class="text-center mb-8">
-        <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-tr from-brand-600 to-indigo-600 text-white text-3xl shadow-lg shadow-brand-500/40 mb-4">
-            <i class="fa-solid fa-bolt"></i>
+    <!-- HIỆU ỨNG MỚI CỰC XỊN: Canvas Particle Network -->
+    <canvas id="particle-canvas" class="fixed inset-0 z-[-2] pointer-events-none opacity-40"></canvas>
+
+    <!-- Lưới không gian (Cyber Grid) -->
+    <div class="fixed inset-0 cyber-grid z-[-1] pointer-events-none"></div>
+
+    <!-- Đèn nền Ambient (Tạo chiều sâu) -->
+    <div class="glow-orb top-[-10%] left-[-10%] w-[500px] h-[500px] bg-brand-500 animate-pulse-slow"></div>
+    <div class="glow-orb bottom-[10%] right-[-10%] w-[600px] h-[600px] bg-indigo-600 animate-pulse-slow"></div>
+
+    <!-- Header Section -->
+    <div class="text-center mb-10 z-10 w-full flex flex-col items-center justify-center animate-float">
+        <div class="flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-tr from-brand-600 to-indigo-600 text-white text-3xl shadow-[0_0_40px_rgba(37,99,235,0.6)] border border-brand-400/40 mb-5 relative overflow-hidden group">
+            <div class="absolute inset-0 bg-white/20 w-full h-full transform -skew-x-12 -translate-x-full group-hover:animate-[shine_1.5s_infinite]"></div>
+            <i class="fa-solid fa-bolt drop-shadow-md"></i>
         </div>
-        <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight">TikFlow Pro</h1>
-        <p class="text-slate-500 mt-2 font-medium">Nền tảng hỗ trợ dân Re-up & Xây Kênh</p>
+        <h1 class="text-4xl md:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white via-blue-100 to-slate-400 tracking-tight mb-2 drop-shadow-sm">
+            TikFlow Pro
+        </h1>
+        <p class="text-brand-400 mt-2 font-bold tracking-widest uppercase text-xs md:text-sm shadow-brand-500/50 drop-shadow-[0_0_10px_rgba(96,165,250,0.5)]">Nền tảng Automation Re-up</p>
     </div>
 
-    <div class="bg-white w-full max-w-2xl rounded-3xl shadow-xl border border-slate-100 overflow-hidden mb-12">
-        <div class="flex border-b border-slate-100 bg-slate-50/80">
-            <button onclick="switchTab('single')" id="tab-single" class="flex-1 py-4 text-sm font-bold text-brand-600 border-b-2 border-brand-600 transition-colors">
-                <i class="fa-solid fa-link mr-2"></i>Tải Lẻ (Miễn phí)
+    <!-- KHUNG CÔNG CỤ CHÍNH (MAIN TOOL) -->
+    <div class="glass-panel w-full max-w-2xl rounded-3xl shadow-[0_20px_50px_rgba(0,0,0,0.5)] overflow-hidden mb-12 relative z-10 border border-slate-700/60 backdrop-blur-2xl">
+        <!-- Vạch sáng trang trí trên cùng -->
+        <div class="h-1 w-full bg-gradient-to-r from-transparent via-brand-400 to-transparent opacity-60"></div>
+
+        <!-- TABS -->
+        <div class="flex p-2 bg-slate-900/60 border-b border-slate-800 relative z-20">
+            <button onclick="switchTab('single')" id="tab-single" class="flex-1 py-3.5 text-sm font-bold rounded-2xl bg-slate-800 text-white shadow-md border border-slate-700 transition-all duration-300 relative overflow-hidden">
+                <div class="absolute inset-0 bg-brand-500/10 opacity-0 hover:opacity-100 transition-opacity"></div>
+                <i class="fa-solid fa-link mr-2 text-brand-400"></i>Tải Lẻ (Miễn phí)
             </button>
-            <button onclick="switchTab('profile')" id="tab-profile" class="flex-1 py-4 text-sm font-bold text-slate-500 hover:text-slate-700 transition-colors border-b-2 border-transparent">
+            <button onclick="switchTab('profile')" id="tab-profile" class="flex-1 py-3.5 text-sm font-bold rounded-2xl text-slate-500 hover:text-slate-300 hover:bg-slate-800/50 transition-all duration-300 relative overflow-hidden">
+                <div class="absolute inset-0 bg-indigo-500/10 opacity-0 hover:opacity-100 transition-opacity"></div>
                 <i class="fa-solid fa-users mr-2"></i>Tải Kênh (Giới hạn)
             </button>
         </div>
 
-        <div class="p-6 md:p-8">
+        <div class="p-6 md:p-8 relative z-20">
+            <!-- TAB 1: TẢI LẺ -->
             <div id="content-single" class="tab-content active">
-                <label class="block text-sm font-bold text-slate-700 mb-2">Đường dẫn Video</label>
-                <input type="text" id="single-url" placeholder="Dán link video TikTok vào đây..." class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-brand-500 outline-none mb-4 bg-slate-50">
-                <button onclick="downloadSingle()" id="btn-single" class="w-full bg-brand-600 hover:bg-brand-700 text-white font-bold py-3.5 px-4 rounded-xl transition-all active:scale-[0.98]">
-                    <span id="text-single"><i class="fa-solid fa-download mr-2"></i>Tải Video Ngay</span>
+                <label class="block text-xs font-black text-slate-400 uppercase tracking-widest mb-3">Đường dẫn Video TikTok</label>
+                <div class="relative group mb-6">
+                    <div class="absolute -inset-0.5 bg-gradient-to-r from-brand-500 to-indigo-500 rounded-2xl blur opacity-30 group-hover:opacity-60 transition duration-500"></div>
+                    <input type="text" id="single-url" placeholder="Dán link video TikTok vào đây..." class="relative w-full px-5 py-4 rounded-xl glass-input text-base font-medium placeholder-slate-500">
+                </div>
+                <button onclick="downloadSingle()" id="btn-single" class="w-full btn-shine bg-gradient-to-r from-brand-600 to-indigo-600 hover:from-brand-500 hover:to-indigo-500 text-white font-black tracking-wider py-4 px-4 rounded-xl transition-all shadow-[0_0_25px_rgba(37,99,235,0.5)] active:scale-95 border border-brand-400/40">
+                    <span id="text-single" class="relative z-10 flex items-center justify-center"><i class="fa-solid fa-download mr-2 text-lg"></i>Tiến Hành Xử Lý</span>
                 </button>
             </div>
 
+            <!-- TAB 2: TẢI KÊNH -->
             <div id="content-profile" class="tab-content">
-                <div class="mb-6 bg-amber-50 border border-amber-200 rounded-xl p-4 flex gap-3 text-amber-900 text-sm shadow-sm">
-                    <i class="fa-solid fa-triangle-exclamation text-amber-500 text-2xl shrink-0 mt-1"></i>
-                    <div>
-                        <p class="font-extrabold mb-1 text-base">Lời nhắn nhỏ từ Bảo! ✌️</p>
-                        <p class="text-[13px] font-medium leading-relaxed text-slate-700">
-                        Hiện tại mình đang chạy TikFlow trên một Server miễn phí nên cấu hình rất yếu. Để tránh máy chủ bị "đứng hình" khi nhiều anh em cùng tải, mình buộc phải giới hạn <strong class="text-amber-400">5 video/lượt</strong> và nghỉ <strong class="text-amber-400">60 giây</strong> để Server kịp hồi sức. 
-                    </p>
-                    <p class="text-[12px] mt-2 italic opacity-70">Mong anh em dùng tạm và thông cảm cho sự bất tiện này nhé!</p>
+                
+                <!-- Thanh đếm Live Counter di chuyển xuống đây -->
+                <div class="flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-slate-900/80 border border-slate-700/80 text-slate-300 text-[10px] font-black uppercase tracking-widest mb-4 shadow-inner w-full backdrop-blur-md">
+                    <span class="relative flex h-2 w-2">
+                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                    </span>
+                    <span class="text-emerald-400 hidden sm:inline">System Online</span>
+                    <div class="hidden sm:block w-[1px] h-3 bg-slate-600 mx-2"></div>
+                    Videos Processed Today: <span id="live-counter" class="text-white font-mono text-xs shadow-sm bg-slate-800 px-2 py-0.5 rounded border border-slate-700">12,458</span>
+                </div>
+
+                <!-- Lời nhắn nhỏ Alert -->
+                <div class="mb-6 bg-amber-950/40 border border-amber-500/30 rounded-2xl p-4 flex gap-4 text-amber-200 shadow-inner relative overflow-hidden group hover:border-amber-500/50 transition-colors">
+                    <div class="absolute top-0 right-0 w-24 h-24 bg-amber-500/10 rounded-full blur-2xl group-hover:bg-amber-500/20 transition-all"></div>
+                    <i class="fa-solid fa-triangle-exclamation text-amber-400 text-2xl shrink-0 mt-1 drop-shadow-[0_0_10px_rgba(251,191,36,0.6)]"></i>
+                    <div class="relative z-10">
+                        <p class="font-black mb-1 text-sm tracking-wide text-amber-300 uppercase">Chú ý Băng Thông ✌️</p>
+                        <p class="text-[13px] font-medium leading-relaxed text-amber-100/80">
+                            Hệ thống Free đang chạy trên Node chia sẻ. Để tránh nghẽn luồng xử lý, giới hạn hiện tại là <strong class="text-amber-300 bg-amber-900/60 px-1.5 py-0.5 rounded shadow-sm">5 video/lượt</strong> và delay <strong class="text-amber-300 bg-amber-900/60 px-1.5 py-0.5 rounded shadow-sm">60 giây</strong>.
+                        </p>
+                        <p class="text-[11px] mt-2 font-bold italic opacity-60">Cảm ơn anh em đã đồng hành cùng TikFlow!</p>
                     </div>
                 </div>
 
-                <label class="block text-sm font-bold text-slate-700 mb-2">Đường dẫn Kênh (Profile)</label>
-                <div class="flex gap-2 mb-4">
-                    <input type="text" id="profile-url" placeholder="VD: https://www.tiktok.com/@username" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-brand-500 outline-none bg-slate-50">
-                    <button onclick="getProfileInfo()" id="btn-info" class="bg-slate-800 hover:bg-slate-900 text-white font-bold py-3 px-6 rounded-xl transition-all whitespace-nowrap shadow-md">
-                        <span id="text-info">Quét Kênh</span>
+                <label class="block text-xs font-black text-slate-400 uppercase tracking-widest mb-3">Đường dẫn Kênh (Profile)</label>
+                <div class="flex gap-3 mb-6 relative group">
+                    <div class="absolute -inset-0.5 bg-gradient-to-r from-slate-600 to-slate-500 rounded-xl blur opacity-20 group-hover:opacity-40 transition duration-500 pointer-events-none"></div>
+                    <input type="text" id="profile-url" placeholder="VD: https://www.tiktok.com/@username" class="flex-1 px-5 py-3.5 rounded-xl glass-input text-sm relative z-10 font-medium placeholder-slate-500">
+                    <button onclick="getProfileInfo()" id="btn-info" class="bg-slate-700 hover:bg-slate-600 text-white font-bold py-3.5 px-6 rounded-xl border border-slate-600 shadow-lg transition-all whitespace-nowrap active:scale-95 relative z-10 hover:shadow-[0_0_15px_rgba(255,255,255,0.1)]">
+                        <span id="text-info"><i class="fa-solid fa-radar mr-2"></i>Quét Kênh</span>
                     </button>
                 </div>
 
+                <!-- Cookie Accordion -->
                 <div class="mb-6">
-                    <details class="group bg-slate-50 border border-slate-200 rounded-xl overflow-hidden shadow-sm">
-                        <summary class="flex items-center justify-between p-4 cursor-pointer text-sm font-bold text-indigo-600 hover:bg-slate-100 transition-colors">
-                            <span><i class="fa-solid fa-cookie-bite mr-2"></i>Chống lỗi bằng Cookie (Khuyên dùng)</span>
+                    <details class="group bg-slate-900/50 border border-slate-700/80 rounded-2xl overflow-hidden transition-all duration-300 hover:border-indigo-500/30 shadow-inner">
+                        <summary class="flex items-center justify-between p-4 cursor-pointer text-sm font-black text-indigo-400 hover:bg-slate-800/80 transition-colors list-none">
+                            <span class="flex items-center tracking-wide"><i class="fa-solid fa-shield-cat mr-3 text-lg drop-shadow-[0_0_8px_rgba(99,102,241,0.5)]"></i>Bypass Security (Cookie)</span>
                             <i class="fa-solid fa-chevron-down text-xs group-open:rotate-180 transition-transform"></i>
                         </summary>
-                        <div class="p-4 pt-0 border-t border-slate-200 bg-white">
-                            <div class="bg-blue-50 text-blue-800 p-3 rounded-lg text-xs font-medium mb-3 mt-3 border border-blue-100">
-                                <p class="font-bold mb-2 text-red-600"><i class="fa-solid fa-triangle-exclamation mr-1"></i> LƯU Ý: TUYỆT ĐỐI DÙNG NICK CLONE (NICK PHỤ) ĐỂ LẤY COOKIE, KHÔNG DÙNG NICK CHÍNH ĐỂ TRÁNH BỊ KHÓA TÀI KHOẢN!</p>
-                                <p class="font-bold mb-1"><i class="fa-solid fa-circle-info mr-1"></i> Hướng dẫn lấy Cookie (3 bước):</p>
-                                <ol class="list-decimal pl-4 space-y-1 opacity-90">
-                                    <li>Lên Google Chrome cài tiện ích <strong>Get cookies.txt LOCALLY</strong>.</li>
-                                    <li>Mở 1 tab mới, đăng nhập <strong>nick TikTok Clone</strong> trên trang tiktok.com.</li>
-                                    <li>Bấm icon tiện ích ở góc phải -> Chọn <strong>Export</strong> -> Copy TOÀN BỘ chữ dán vào ô bên dưới.</li>
+                        <div class="p-4 pt-0 border-t border-slate-800/50 bg-slate-900/30">
+                            <div class="bg-rose-950/40 border border-rose-500/20 text-rose-200 p-3.5 rounded-xl text-xs font-medium mb-4 mt-3 shadow-inner relative overflow-hidden">
+                                <div class="absolute left-0 top-0 w-1 h-full bg-rose-500"></div>
+                                <p class="font-black mb-2 text-rose-400 uppercase tracking-wider"><i class="fa-solid fa-skull-crossbones mr-2"></i> CẢNH BÁO BẢO MẬT</p>
+                                <p class="mb-3">Tuyệt đối dùng <strong class="text-white">Nick Clone (Nick Phụ)</strong> để lấy Cookie. Không dùng nick chính để tránh rủi ro checkpoint tài khoản!</p>
+                                <p class="font-bold mb-1 text-rose-300 border-t border-rose-500/20 pt-2"><i class="fa-solid fa-circle-info mr-1"></i> Cách lấy Cookie chuẩn:</p>
+                                <ol class="list-decimal pl-5 space-y-1.5 opacity-90 text-slate-300 font-mono text-[11px] mt-2">
+                                    <li>Lên Chrome cài tiện ích <strong class="text-white bg-slate-800 px-1.5 py-0.5 rounded border border-slate-700">Get cookies.txt LOCALLY</strong>.</li>
+                                    <li>Mở tab ẩn danh mới, đăng nhập <strong class="text-white">nick Clone</strong> vào TikTok.</li>
+                                    <li>Bấm tiện ích -> Chọn <strong class="text-white bg-slate-800 px-1.5 py-0.5 rounded border border-slate-700">Export</strong> -> Copy toàn bộ mã dán vào dưới.</li>
                                 </ol>
                             </div>
-                            <textarea id="cookie-input" placeholder="Dán mã Cookie của bạn vào đây...&#10;Mã đúng thường bắt đầu bằng: # Netscape HTTP Cookie File" class="w-full px-4 py-3 h-24 rounded-lg border border-slate-200 focus:ring-2 focus:ring-indigo-500 outline-none text-xs text-slate-600 font-mono bg-slate-50"></textarea>
+                            <textarea id="cookie-input" placeholder="Dán mã Cookie (Netscape format) vào đây...&#10;Mã đúng thường bắt đầu bằng: # Netscape HTTP Cookie File" class="w-full px-4 py-3 h-24 rounded-xl glass-input text-xs font-mono placeholder-slate-600"></textarea>
                         </div>
                     </details>
                 </div>
 
-                <div id="range-section" class="hidden mt-6 pt-6 border-t border-slate-100">
-                    <div class="flex items-center p-4 bg-emerald-50 border border-emerald-100 rounded-2xl mb-6 shadow-sm">
-                        <img id="profile-avatar" src="" alt="Avatar" class="w-16 h-16 rounded-full border-2 border-emerald-200 object-cover mr-4 shadow-sm bg-white">
-                        <div>
-                            <h3 id="profile-name" class="font-extrabold text-lg text-slate-800 truncate max-w-[200px] md:max-w-xs">Tên Kênh</h3>
-                            <div class="flex items-center mt-1">
-                                <span class="bg-emerald-100 text-emerald-700 text-xs font-bold px-2.5 py-1 rounded-full border border-emerald-200">
+                <!-- Range Section (Kênh Info) -->
+                <div id="range-section" class="hidden mt-6 pt-6 border-t border-slate-800">
+                    <div class="flex items-center p-4 bg-emerald-950/30 border border-emerald-500/30 rounded-2xl mb-6 shadow-[inset_0_0_20px_rgba(16,185,129,0.05)] relative overflow-hidden group">
+                        <div class="absolute right-0 top-0 w-32 h-full bg-gradient-to-l from-emerald-500/10 to-transparent"></div>
+                        <img id="profile-avatar" src="" alt="Avatar" class="w-16 h-16 rounded-full border-2 border-emerald-400/50 object-cover mr-4 shadow-[0_0_20px_rgba(16,185,129,0.4)] bg-slate-900 z-10 transition-transform group-hover:scale-105">
+                        <div class="z-10">
+                            <h3 id="profile-name" class="font-black text-lg text-white truncate max-w-[200px] md:max-w-xs drop-shadow-md">Tên Kênh</h3>
+                            <div class="flex items-center mt-1.5">
+                                <span class="bg-emerald-500/20 text-emerald-400 text-[10px] font-black tracking-widest uppercase px-2.5 py-1 rounded-md border border-emerald-500/40 shadow-[0_0_10px_rgba(16,185,129,0.2)]">
                                     <i class="fa-solid fa-video mr-1"></i> <span id="info-result">0</span> Video
                                 </span>
                             </div>
                         </div>
                     </div>
 
-                    <div class="grid grid-cols-2 gap-4 mb-6">
-                        <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 text-center">
-                            <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Từ video số</label>
-                            <input type="number" id="start-idx" min="1" value="1" class="w-full bg-transparent outline-none text-center font-bold text-xl text-slate-800">
+                    <div class="grid grid-cols-2 gap-5 mb-6">
+                        <div class="glass-card p-4 rounded-2xl text-center shadow-inner hover:border-slate-600 transition-colors">
+                            <label class="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1.5">Từ Index</label>
+                            <input type="number" id="start-idx" min="1" value="1" class="w-full bg-transparent outline-none text-center font-black text-3xl text-white">
                         </div>
-                        <div class="bg-brand-50 p-3 rounded-xl border border-brand-200 text-center relative">
-                            <label class="block text-xs font-bold text-brand-600 uppercase mb-1">Đến video số</label>
-                            <input type="number" id="end-idx" min="1" value="5" class="w-full bg-transparent outline-none text-center font-bold text-xl text-brand-700">
-                            <div class="absolute -top-2 -right-2 bg-red-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow-sm">Max 5</div>
+                        <div class="bg-brand-950/40 border border-brand-500/40 p-4 rounded-2xl text-center relative shadow-[inset_0_0_15px_rgba(59,130,246,0.1)] hover:border-brand-400/60 transition-colors">
+                            <label class="block text-[10px] font-black text-brand-400 uppercase tracking-widest mb-1.5">Đến Index</label>
+                            <input type="number" id="end-idx" min="1" value="5" class="w-full bg-transparent outline-none text-center font-black text-3xl text-brand-300 drop-shadow-[0_0_8px_rgba(96,165,250,0.5)]">
+                            <div class="absolute -top-2.5 -right-2.5 bg-rose-500 text-white text-[9px] font-black px-2.5 py-0.5 rounded-full shadow-[0_0_15px_rgba(244,63,94,0.6)] border border-rose-400 tracking-wider">MAX 5</div>
                         </div>
                     </div>
 
-                    <button onclick="downloadProfile()" id="btn-profile-dl" class="w-full bg-brand-600 hover:bg-brand-700 text-white font-bold py-4 px-4 rounded-xl transition-all active:scale-[0.98] shadow-lg shadow-brand-500/30">
-                        <span id="text-profile-dl"><i class="fa-solid fa-file-zipper mr-2 text-lg"></i>NÉN VÀ TẢI FILE ZIP</span>
+                    <button onclick="downloadProfile()" id="btn-profile-dl" class="w-full btn-shine bg-gradient-to-r from-brand-600 to-indigo-600 hover:from-brand-500 hover:to-indigo-500 text-white font-black tracking-wider py-4 px-4 rounded-xl transition-all shadow-[0_0_25px_rgba(37,99,235,0.4)] border border-brand-400/40 active:scale-95">
+                        <span id="text-profile-dl" class="relative z-10 flex items-center justify-center"><i class="fa-solid fa-boxes-packing mr-2 text-lg"></i>ĐÓNG GÓI VÀ TẢI ZIP</span>
                     </button>
                 </div> 
-                <div id="progressContainer" class="hidden mt-6 bg-slate-900 p-6 rounded-3xl shadow-2xl border border-slate-700 w-full relative overflow-hidden text-white">
-                    <div class="flex justify-between items-center mb-4">
-                        <h4 class="text-sm font-extrabold text-white uppercase tracking-wider">Trạng thái xử lý</h4>
-                        <span id="progressPercent" class="text-sm font-black text-brand-400 bg-brand-900/50 px-2 py-1 rounded-lg">0%</span>
+
+                <!-- Terminal Progress (Automation Style) -->
+                <div id="progressContainer" class="hidden mt-8 bg-[#050505] p-5 rounded-2xl shadow-[inset_0_0_20px_rgba(0,0,0,1)] border border-slate-800 w-full relative overflow-hidden">
+                    <!-- Scanner Line Effect -->
+                    <div class="absolute inset-0 w-full h-[2px] bg-emerald-500/50 blur-[2px] animate-scanline z-0 pointer-events-none"></div>
+
+                    <div class="flex justify-between items-center mb-5 relative z-10 border-b border-slate-800 pb-3">
+                        <h4 class="text-[11px] font-black text-slate-500 uppercase tracking-widest"><i class="fa-solid fa-terminal mr-2 text-slate-400"></i>Terminal Logs</h4>
+                        <span id="progressPercent" class="text-xs font-black text-emerald-400 bg-emerald-900/30 px-2.5 py-1 rounded border border-emerald-500/30 shadow-[0_0_15px_rgba(16,185,129,0.2)]">0%</span>
                     </div>
                     
-                    <div id="video-status-list" class="space-y-2 mb-6 text-white"></div>
+                    <div id="video-status-list" class="space-y-2 mb-6 text-white font-mono text-[11px] relative z-10"></div>
 
-                    <div class="w-full bg-slate-800 rounded-full h-2 mb-2 overflow-hidden">
-                        <div id="progressBar" class="bg-brand-500 h-2 w-0 transition-all duration-300 progress-bar-striped progress-bar-animated"></div>
+                    <div class="w-full bg-slate-900 rounded-full h-2 mb-3 overflow-hidden border border-slate-800 relative z-10 shadow-inner">
+                        <div id="progressBar" class="bg-gradient-to-r from-emerald-600 to-emerald-400 h-2 w-0 transition-all duration-300 progress-bar-striped progress-bar-animated shadow-[0_0_15px_rgba(52,211,153,0.8)]"></div>
                     </div>
-                    <p id="progressText" class="text-[10px] text-slate-400 font-bold italic text-center">Đang kết nối API bảo mật...</p>
+                    <p id="progressText" class="text-[10px] text-emerald-400 font-mono font-bold italic terminal-text relative z-10 drop-shadow-[0_0_5px_rgba(52,211,153,0.5)]">Khởi tạo Secure Connection...</p>
                 </div>
-                <div class="mt-6">
-                    <div class="p-6 rounded-3xl bg-slate-900 border border-slate-700 shadow-2xl relative overflow-hidden">
-                        <div class="absolute top-0 right-0 p-2 opacity-10">
-                            <i class="fa-solid fa-rocket text-6xl rotate-12"></i>
-                        </div>
-
-                        <div class="flex items-start gap-4 text-left relative z-10">
-                            <div class="bg-brand-600/20 p-3 rounded-2xl shrink-0">
-                                <i class="fa-solid fa-up-long text-brand-400 text-xl"></i>
-                            </div>
-                            <div>
-                                <h4 class="text-white font-black text-sm uppercase tracking-wider mb-2 italic">Dự định nâng cấp TikFlow Web 🚀</h4>
-                                <p class="text-slate-400 text-[12px] leading-relaxed mb-4">
-                                    Mình rất muốn mở rộng giới hạn lên <strong class="text-white">10-20 video/lượt</strong> để anh em làm việc nhanh hơn. Tuy nhiên, việc này cần kinh phí nâng cấp <strong class="text-brand-400">VPS xịn</strong> và hệ thống <strong class="text-brand-400">Proxy chống chặn</strong> khá đắt đỏ.
-                                </p>
-                                
-                                <div class="bg-slate-800/50 p-3 rounded-xl mb-4 border border-slate-700/50">
-                                    <p class="text-[12px] text-slate-300 italic leading-tight">
-                                        Nếu Tool đang giúp bạn kiếm tiền ổn, hãy ủng hộ mình một ly cafe để mình có kinh phí duy trì web cho anh em dùng nhé! Hoặc mua <strong class="text-white underline">Tool Pro vĩnh viễn</strong> để tải được nhiều video hơn mà không cần phải đợi.
-                                    </p>
-                                </div>
-
-                                <div class="mt-5 bg-slate-800/40 p-5 rounded-[32px] border border-slate-700/50 shadow-inner">
-                                    <div class="flex flex-col sm:flex-row items-center justify-center gap-6">
-                                        <div class="flex flex-col items-center">
-                                            <div class="bg-white p-2 rounded-2xl shadow-xl border-2 border-pink-500/20 mb-3">
-                                                <img src="https://i.ibb.co/0pKS694B/Bank-Mo-Mo.jpg" alt="Momo Lê Gia Bảo" class="w-40 h-40 object-contain">
-                                            </div>
-                                            <span class="text-[10px] font-black text-pink-500 uppercase tracking-widest">Ví Momo</span>
-                                        </div>
-
-                                        <div class="flex flex-row sm:flex-col items-center gap-2">
-                                            <div class="h-[1px] w-8 sm:h-8 sm:w-[1px] bg-slate-600"></div>
-                                            <span class="text-[9px] font-black text-slate-500 uppercase">HOẶC</span>
-                                            <div class="h-[1px] w-8 sm:h-8 sm:w-[1px] bg-slate-600"></div>
-                                        </div>
-
-                                        <div class="flex flex-col items-center">
-                                            <div class="bg-white p-2 rounded-2xl shadow-xl border-2 border-blue-500/20 mb-3">
-                                                <img src="https://i.ibb.co/xKFd82K3/c7b2d054-4838-4719-a65e-823b341cd28e.jpg" alt="Bank Lê Gia Bảo" class="w-50 h-50 object-contain">
-                                            </div>
-                                            <span class="text-[10px] font-black text-blue-400 uppercase tracking-widest">Ngân Hàng</span>
-                                        </div>
-                                    </div>
-
-                                    <div class="mt-6 pt-5 border-t border-slate-700/50 text-center">
-                                        <p class="text-xs font-black text-white tracking-[0.2em] mb-4">CHỦ TK: LÊ GIA BẢO</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="mt-6 p-5 rounded-2xl bg-gradient-to-br from-slate-900 to-slate-800 text-center shadow-xl border border-slate-700 relative overflow-hidden group">
-                        <div class="absolute top-0 right-0 bg-red-500 text-white text-[10px] font-extrabold px-3 py-1 rounded-bl-xl shadow-md">ĐỀ XUẤT</div>
-                        <h3 class="text-white font-extrabold text-base mb-1">Cần tải toàn bộ profile một lúc?</h3>
-                        <p class="text-slate-400 text-xs mb-4 font-medium">Bỏ qua giới hạn 5 video. Tải siêu tốc bằng mạng nhà bạn.Có file hướng dẫn cài đặt</p>
-                        <a href="https://zalo.me/0911492568" target="_blank" 
-                            class="inline-block bg-gradient-to-r from-yellow-400 to-yellow-500 text-slate-900 font-extrabold text-sm px-6 py-2.5 rounded-full hover:scale-105 transition-transform shadow-[0_0_15px_rgba(250,204,21,0.4)]">
-                            <i class="fa-solid fa-comment-dots mr-2"></i>MUA TOOL PRO - 299K
-                        </a>
-                    </div>
-                </div>
-                </div>
+            </div>
         </div>
     </div>
 
-    <div class="w-full max-w-4xl mt-4">
-        <div class="text-center mb-8">
-            <h2 class="text-2xl md:text-3xl font-extrabold text-slate-900">Bứt Phá Thu Nhập Cùng <span class="text-brand-600">TikFlow Pro</span></h2>
-            <p class="text-slate-500 mt-2">Dành cho những ai nghiêm túc với việc Xây Kênh & MMO</p>
+    <!-- KHU VỰC UPSELL & DONATE (GRID CHUYÊN NGHIỆP) -->
+    <div class="w-full max-w-4xl z-10">
+        <div class="text-center mb-10">
+            <h2 class="text-2xl md:text-3xl font-black text-white tracking-tight drop-shadow-md">Nâng Cấp Hệ Sinh Thái <span class="text-transparent bg-clip-text bg-gradient-to-r from-brand-400 to-indigo-400">TikFlow Pro</span></h2>
+            <p class="text-slate-400 mt-2 text-sm font-medium">Lựa chọn giải pháp phù hợp với quy mô Re-up của bạn</p>
         </div>
+
         <div class="grid md:grid-cols-2 gap-6">
-            <div class="bg-white p-8 rounded-3xl border border-slate-200 shadow-sm opacity-80 hover:opacity-100 transition-opacity">
-                <h3 class="text-lg font-bold text-slate-500 mb-2">Bản Web (Đang dùng)</h3>
-                <div class="text-3xl font-extrabold text-slate-900 mb-6">Miễn Phí</div>
-                <ul class="space-y-4 text-sm text-slate-600 font-medium mb-8">
-                    <li class="flex items-center"><i class="fa-solid fa-check text-emerald-500 mr-3 text-lg"></i>Tải video lẻ không giới hạn</li>
-                    <li class="flex items-center"><i class="fa-solid fa-xmark text-red-500 mr-3 text-lg"></i>Giới hạn 5 video/lần tải Kênh</li>
-                    <li class="flex items-center"><i class="fa-solid fa-xmark text-red-500 mr-3 text-lg"></i>Dễ bị gián đoạn do server đông</li>
-                </ul>
-                <button class="w-full bg-slate-100 text-slate-500 font-bold py-3 rounded-xl cursor-not-allowed">Đang sử dụng</button>
-            </div>
-            <div class="bg-slate-900 p-8 rounded-3xl border border-slate-700 shadow-2xl relative transform md:-translate-y-4">
-                <div class="absolute top-0 right-8 transform -translate-y-1/2 bg-gradient-to-r from-pink-500 to-orange-400 text-white text-xs font-extrabold px-4 py-1.5 rounded-full uppercase tracking-wider shadow-lg">Khuyên Dùng</div>
-                <h3 class="text-lg font-bold text-brand-400 mb-2">Combo Tool vĩnh viễn + Hướng dẫn Reup Tự Động </h3>
-                <div class="flex items-end gap-2 mb-6">
-                    <div class="text-4xl font-extrabold text-white">[499.000 VNĐ]</div>
+            
+            <!-- THẺ 1: ỦNG HỘ CAFE & FREE TIER -->
+            <div class="glass-card p-8 rounded-[32px] relative overflow-hidden group hover:-translate-y-2 transition-transform duration-300 shadow-xl border border-slate-700/50 hover:border-brand-500/30">
+                <div class="absolute top-[-20px] right-[-20px] opacity-5 group-hover:opacity-10 transition-opacity transform group-hover:rotate-12 duration-500">
+                    <i class="fa-solid fa-server text-9xl text-brand-500"></i>
                 </div>
-                <ul class="space-y-4 text-sm text-slate-300 font-medium mb-8">
-                    <li class="flex items-center"><i class="fa-solid fa-rocket text-yellow-400 mr-3 text-lg"></i><strong>Tool .EXE:</strong>&nbsp;Không giới hạn, tải siêu tốc</li>
-                    <li class="flex items-center"><i class="fa-solid fa-book-open text-yellow-400 mr-3 text-lg"></i><strong>Khóa học:</strong>&nbsp;Xây Kênh & Affiliate thực chiến</li>
-                    <li class="flex items-center"><i class="fa-solid fa-headset text-yellow-400 mr-3 text-lg"></i>Hỗ trợ cài đặt online 1-1 qua Zalo / Telegram</li>
+                
+                <h4 class="text-brand-400 font-black text-[10px] uppercase tracking-widest mb-2 flex items-center"><i class="fa-solid fa-cloud mr-2"></i>Bản Web (Hiện Tại)</h4>
+                <div class="text-3xl font-black text-white mb-4 drop-shadow-sm">Miễn Phí</div>
+                
+                <ul class="space-y-3.5 text-sm text-slate-300 font-medium mb-6">
+                    <li class="flex items-center"><i class="fa-solid fa-check text-emerald-400 mr-3 text-lg drop-shadow-[0_0_5px_rgba(52,211,153,0.5)]"></i>Tải video lẻ không giới hạn</li>
+                    <li class="flex items-center"><i class="fa-solid fa-xmark text-rose-500 mr-3 text-lg opacity-80"></i>Giới hạn 5 video/lần tải Kênh</li>
+                    <li class="flex items-center"><i class="fa-solid fa-xmark text-rose-500 mr-3 text-lg opacity-80"></i>Băng thông chia sẻ (Shared Node)</li>
                 </ul>
-                <a href="https://zalo.me/0911492568" target="_blank" class="block text-center w-full bg-gradient-to-r from-brand-500 to-indigo-500 hover:from-brand-400 hover:to-indigo-400 text-white font-bold py-4 rounded-xl transition-all shadow-lg active:scale-95">
-                    <i class="fa-solid fa-paper-plane mr-2"></i>LIÊN HỆ ZALO: 0911.492.568
+
+                <div class="border-t border-slate-700/50 pt-6 mt-6">
+                    <h4 class="text-white font-bold text-sm uppercase tracking-wider mb-2 flex items-center"><i class="fa-solid fa-mug-hot text-amber-500 mr-2"></i>Mời Dev ly Cafe 🚀</h4>
+                    <p class="text-slate-400 text-[11px] leading-relaxed mb-4">
+                        Mình dự định mua thêm <strong class="text-brand-300">VPS xịn</strong> để nới rộng giới hạn tải cho anh em. Nếu Tool giúp bạn tối ưu công việc, hãy ủng hộ để duy trì hệ thống nhé!
+                    </p>
+                    
+                    <div class="flex items-center justify-between bg-[#0a0f1d] p-3 rounded-2xl border border-slate-800 shadow-inner group-hover:border-slate-700 transition-colors">
+                        <div class="flex items-center gap-3">
+                            <img src="https://i.ibb.co/0pKS694B/Bank-Mo-Mo.jpg" alt="Momo" class="w-10 h-10 rounded-lg object-cover border border-pink-500/30 shadow-md">
+                            <div>
+                                <p class="text-[9px] text-pink-400 font-black uppercase tracking-widest">Ví Momo / Bank</p>
+                                <p class="text-xs text-white font-bold tracking-wider">LÊ GIA BẢO</p>
+                            </div>
+                        </div>
+                        <button onclick="openQrModal()" class="text-[10px] bg-slate-800 hover:bg-brand-600 text-white px-3.5 py-2 rounded-xl border border-slate-700 hover:border-brand-500 transition-all font-black shadow-lg flex items-center gap-1.5">
+                            <i class="fa-solid fa-qrcode text-xs"></i> MÃ QR
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- THẺ 2: UPSELL PRO TOOL -->
+            <div class="bg-gradient-to-br from-[#1a1310] to-[#2a1708] p-8 rounded-[32px] border border-amber-500/40 relative shadow-[0_20px_40px_rgba(245,158,11,0.15)] group hover:-translate-y-2 transition-transform duration-300 overflow-hidden hover:shadow-[0_20px_50px_rgba(245,158,11,0.25)]">
+                <!-- Highlight Glow -->
+                <div class="absolute inset-0 bg-gradient-to-t from-amber-500/10 to-transparent pointer-events-none"></div>
+                <!-- Ánh sáng chéo -->
+                <div class="absolute -inset-10 bg-gradient-to-r from-transparent via-amber-500/10 to-transparent transform rotate-45 translate-x-[-150%] group-hover:translate-x-[150%] transition-transform duration-1000"></div>
+
+                <div class="absolute top-0 right-6 transform -translate-y-1/2 bg-gradient-to-r from-amber-500 to-orange-500 text-slate-900 text-[9px] font-black px-4 py-1.5 rounded-full uppercase tracking-widest shadow-[0_0_15px_rgba(245,158,11,0.6)]">Enterprise</div>
+                
+                <h3 class="text-[10px] font-black text-amber-500 uppercase tracking-widest mb-2 flex items-center"><i class="fa-solid fa-crown mr-2"></i>TikFlow Tool Vĩnh Viễn</h3>
+                <div class="flex items-end gap-2 mb-6 relative z-10">
+                    <div class="text-4xl font-black text-white tracking-tight drop-shadow-md">299.000đ</div>
+                </div>
+                
+                <div class="bg-amber-500/10 border border-amber-500/30 rounded-xl p-3.5 mb-6 backdrop-blur-sm relative z-10">
+                    <h3 class="text-amber-400 font-black text-xs mb-1 uppercase tracking-wide">Giải pháp Re-up Tối Thượng</h3>
+                    <p class="text-amber-200/70 text-[10px] font-medium leading-tight">Bỏ qua mọi giới hạn tải của Bản Web. Chạy siêu tốc trực tiếp trên máy tính của bạn với mã nguồn VIP.</p>
+                </div>
+
+                <ul class="space-y-4 text-sm text-slate-300 font-medium mb-8 relative z-10">
+                    <li class="flex items-center"><i class="fa-solid fa-rocket text-amber-500 mr-3 text-lg drop-shadow-[0_0_5px_rgba(245,158,11,0.5)]"></i><strong class="text-white mr-1">Phần mềm .EXE:</strong> Không giới hạn tải kênh</li>
+                    <li class="flex items-center"><i class="fa-solid fa-book-open text-amber-500 mr-3 text-lg drop-shadow-[0_0_5px_rgba(245,158,11,0.5)]"></i><strong class="text-white mr-1">Tặng kèm:</strong> Tài liệu tư duy Xây Kênh Re-up</li>
+                    <li class="flex items-center"><i class="fa-solid fa-headset text-amber-500 mr-3 text-lg drop-shadow-[0_0_5px_rgba(245,158,11,0.5)]"></i>Hỗ trợ setup & bảo hành 1-1 qua Zalo</li>
+                </ul>
+                
+                <a href="https://zalo.me/0911492568" target="_blank" class="block text-center w-full btn-shine bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-slate-900 font-black tracking-widest py-4 rounded-xl transition-all shadow-[0_0_20px_rgba(245,158,11,0.5)] active:scale-95 relative z-10 overflow-hidden border border-amber-300/50">
+                    <span class="relative z-10 flex items-center justify-center"><i class="fa-solid fa-cart-shopping mr-2"></i>SỞ HỮU NGAY TOOL PRO</span>
                 </a>
+                <div class="text-center mt-4 relative z-10">
+                    <a href="https://zalo.me/0911492568" target="_blank" class="inline-flex items-center text-[10px] text-slate-400 hover:text-amber-400 transition-colors font-bold uppercase tracking-widest bg-slate-900/50 px-3 py-1.5 rounded-full border border-slate-700 hover:border-amber-500/50"><i class="fa-brands fa-whatsapp mr-1.5 text-sm"></i> LIÊN HỆ ZALO: 0911.492.568</a>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Toast Notification (Styled for Dark Mode) -->
+    <div id="toast" class="toast fixed top-6 right-6 flex items-center w-full max-w-sm p-4 rounded-2xl shadow-[0_15px_50px_rgba(0,0,0,0.6)] text-white font-bold z-50 border border-white/10 glass-panel">
+        <i id="toast-icon" class="fa-solid mr-3 text-2xl"></i>
+        <span id="toast-msg" class="text-sm tracking-wide">Thông báo</span>
+    </div>
+
+    <!-- QR Modal Popup -->
+    <div id="qr-modal" class="fixed inset-0 z-[100] hidden items-center justify-center p-4">
+        <div class="absolute inset-0 bg-slate-950/80 backdrop-blur-sm" onclick="closeQrModal()"></div>
+        <div class="relative w-full max-w-md glass-card rounded-[32px] border border-slate-700/50 p-6 md:p-8 shadow-2xl transform scale-95 opacity-0 transition-all duration-300" id="qr-modal-content">
+            <button onclick="closeQrModal()" class="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full bg-slate-800 text-slate-400 hover:text-white hover:bg-rose-500 transition-colors">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <h3 class="text-center text-xl font-black text-white mb-1 tracking-wide flex items-center justify-center gap-2"><i class="fa-solid fa-mug-hot text-amber-500"></i> ỦNG HỘ DEV</h3>
+            <p class="text-center text-slate-400 text-[11px] mb-6 font-medium">Quét mã QR để ủng hộ kinh phí duy trì Server nhé!</p>
+            
+            <div class="grid grid-cols-2 gap-4">
+                <!-- Momo -->
+                <div class="flex flex-col items-center bg-slate-900/80 p-4 rounded-2xl border border-pink-500/20 shadow-inner group hover:border-pink-500/50 transition-colors">
+                    <div class="bg-white p-2 rounded-xl mb-3 shadow-lg transform group-hover:scale-105 transition-transform">
+                        <img src="https://i.ibb.co/0pKS694B/Bank-Mo-Mo.jpg" alt="MoMo QR" class="w-full h-auto rounded-lg">
+                    </div>
+                    <span class="text-[10px] font-black text-pink-400 uppercase tracking-widest">Ví MoMo</span>
+                </div>
+                <!-- Bank -->
+                <div class="flex flex-col items-center bg-slate-900/80 p-4 rounded-2xl border border-blue-500/20 shadow-inner group hover:border-blue-500/50 transition-colors">
+                    <div class="bg-white p-2 rounded-xl mb-3 shadow-lg transform group-hover:scale-105 transition-transform">
+                        <img src="https://i.ibb.co/xKFd82K3/c7b2d054-4838-4719-a65e-823b341cd28e.jpg" alt="Bank QR" class="w-full h-auto rounded-lg">
+                    </div>
+                    <span class="text-[10px] font-black text-blue-400 uppercase tracking-widest">Ngân Hàng</span>
+                </div>
+            </div>
+            <div class="mt-5 text-center bg-[#0a0f1d] p-3 rounded-xl border border-slate-700 shadow-inner">
+                <p class="text-xs text-white font-black tracking-widest">CHỦ TK: LÊ GIA BẢO</p>
             </div>
         </div>
     </div>
 
-    <div id="toast" class="toast fixed top-6 right-6 flex items-center w-full max-w-sm p-4 rounded-xl shadow-2xl text-white font-bold z-50">
-        <i id="toast-icon" class="fa-solid mr-3 text-2xl"></i>
-        <span id="toast-msg" class="text-sm">Thông báo</span>
-    </div>
+    <!-- Footer Chuyên nghiệp -->
+    <footer class="mt-24 pb-10 w-full max-w-2xl border-t border-slate-800 pt-10 z-10">
+        <div class="flex flex-col items-center">
+            <div class="w-12 h-12 rounded-xl bg-slate-900 flex items-center justify-center text-brand-400 mb-5 shadow-inner border border-slate-700 transform hover:rotate-12 transition-transform duration-300 hover:shadow-[0_0_15px_rgba(59,130,246,0.3)]">
+                <span class="font-black text-sm tracking-widest">LGB</span>
+            </div>
+            
+            <div class="relative px-6 py-2 w-full max-w-xs">
+                <div class="absolute inset-0 flex items-center">
+                    <div class="w-full border-t border-slate-800"></div>
+                </div>
+                <div class="relative flex justify-center text-[10px] font-black uppercase tracking-[0.4em] text-slate-500 bg-[#020617] px-4">
+                    Powered By
+                </div>
+            </div>
+            
+            <h2 class="mt-4 text-xl font-black italic tracking-tighter text-white group cursor-default drop-shadow-[0_0_10px_rgba(255,255,255,0.2)] hover:text-brand-400 transition-colors">
+                LÊ GIA BẢO
+            </h2>
+            
+            <div class="mt-5 flex items-center gap-4 text-slate-500">
+                <a href="https://zalo.me/0911492568" target="_blank" class="hover:text-brand-400 hover:scale-110 transition-all"><i class="fa-solid fa-paper-plane text-lg"></i></a>
+                <div class="w-[1px] h-3 bg-slate-700"></div>
+                <span class="text-[10px] font-black uppercase tracking-widest text-brand-500/70">TikFlow Pro Ecosystem v2.0</span>
+            </div>
+            
+            <p class="mt-8 text-[9px] text-slate-600 font-black uppercase tracking-widest">
+                &copy; 2026 - All Rights Reserved by Le Gia Bao
+            </p>
+        </div>
+    </footer>
 
+    <!-- JAVASCRIPT LOGIC GIỮ NGUYÊN 100% -->
     <script>
+        function openQrModal() {
+            const modal = document.getElementById('qr-modal');
+            const content = document.getElementById('qr-modal-content');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            setTimeout(() => {
+                content.classList.remove('scale-95', 'opacity-0');
+                content.classList.add('scale-100', 'opacity-100');
+            }, 10);
+        }
+
+        function closeQrModal() {
+            const modal = document.getElementById('qr-modal');
+            const content = document.getElementById('qr-modal-content');
+            content.classList.remove('scale-100', 'opacity-100');
+            content.classList.add('scale-95', 'opacity-0');
+            setTimeout(() => {
+                modal.classList.remove('flex');
+                modal.classList.add('hidden');
+            }, 300);
+        }
+
         function startCooldownTimer(seconds) {
             const btnProfile = document.getElementById('btn-profile-dl');
             if (!btnProfile) return;
 
             btnProfile.disabled = true;
-            btnProfile.classList.add('opacity-50', 'cursor-not-allowed', 'bg-slate-400');
-            btnProfile.classList.remove('bg-brand-600', 'hover:bg-brand-700');
+            btnProfile.classList.add('opacity-50', 'cursor-not-allowed', 'from-slate-700', 'to-slate-800', 'border-slate-600');
+            btnProfile.classList.remove('from-brand-600', 'to-indigo-600', 'hover:from-brand-500', 'hover:to-indigo-500', 'shadow-[0_0_25px_rgba(37,99,235,0.4)]', 'border-brand-400/40');
 
             let timeLeft = seconds;
             const timer = setInterval(() => {
                 timeLeft--;
                 
                 btnProfile.innerHTML = `
-                    <div class="flex flex-col items-center leading-tight py-1">
-                        <span class="text-[10px] font-black text-amber-300 animate-pulse uppercase italic">Hệ thống đang nghỉ ngơi: ${timeLeft}s</span>
-                        <span class="text-[9px] font-bold opacity-80 mt-1">Đợi 30s để Server Free không bị quá tải bạn nhé!</span>
+                    <div class="flex flex-col items-center leading-tight py-1 relative z-10">
+                        <span class="text-[10px] font-black text-amber-400 animate-pulse uppercase tracking-widest">Hệ thống đang nghỉ ngơi: ${timeLeft}s</span>
+                        <span class="text-[9px] font-bold text-slate-300 mt-1 opacity-80">Đợi 60s để Server Free không bị nghẽn nhé!</span>
                     </div>
                 `;
 
@@ -271,10 +442,10 @@
                     clearInterval(timer);
                     localStorage.removeItem('tikflow_cooldown');
                     btnProfile.disabled = false;
-                    btnProfile.innerHTML = '<i class="fa-solid fa-file-zipper mr-2 text-lg"></i>NÉN VÀ TẢI FILE ZIP';
-                    btnProfile.classList.remove('opacity-50', 'cursor-not-allowed', 'bg-slate-400');
-                    btnProfile.classList.add('bg-brand-600', 'hover:bg-brand-700');
-                    showToast('Sẵn sàng cho lượt tải tiếp theo!', 'success');
+                    btnProfile.innerHTML = '<span id="text-profile-dl" class="relative z-10 flex items-center justify-center"><i class="fa-solid fa-boxes-packing mr-2 text-lg"></i>ĐÓNG GÓI VÀ TẢI ZIP</span>';
+                    btnProfile.classList.remove('opacity-50', 'cursor-not-allowed', 'from-slate-700', 'to-slate-800', 'border-slate-600');
+                    btnProfile.classList.add('from-brand-600', 'to-indigo-600', 'hover:from-brand-500', 'hover:to-indigo-500', 'shadow-[0_0_25px_rgba(37,99,235,0.4)]', 'border-brand-400/40');
+                    showToast('Server Ready! Đã có thể tải tiếp.', 'success');
                 }
             }, 1000);
         }
@@ -296,21 +467,33 @@
 
         function switchTab(tab) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-            document.getElementById('tab-single').className = "flex-1 py-4 text-sm font-bold text-slate-500 hover:text-slate-700 transition-colors border-b-2 border-transparent";
-            document.getElementById('tab-profile').className = "flex-1 py-4 text-sm font-bold text-slate-500 hover:text-slate-700 transition-colors border-b-2 border-transparent";
+            document.getElementById('tab-single').className = "flex-1 py-3.5 text-sm font-bold rounded-2xl text-slate-500 hover:text-slate-300 hover:bg-slate-800/50 transition-all duration-300 relative overflow-hidden";
+            document.getElementById('tab-profile').className = "flex-1 py-3.5 text-sm font-bold rounded-2xl text-slate-500 hover:text-slate-300 hover:bg-slate-800/50 transition-all duration-300 relative overflow-hidden";
             
+            // Re-add hover effects for inactive tabs
+            if(tab === 'profile') document.getElementById('tab-single').innerHTML = '<div class="absolute inset-0 bg-brand-500/10 opacity-0 hover:opacity-100 transition-opacity"></div><i class="fa-solid fa-link mr-2 text-slate-500"></i>Tải Lẻ (Miễn phí)';
+            if(tab === 'single') document.getElementById('tab-profile').innerHTML = '<div class="absolute inset-0 bg-indigo-500/10 opacity-0 hover:opacity-100 transition-opacity"></div><i class="fa-solid fa-users mr-2 text-slate-500"></i>Tải Kênh (Giới hạn)';
+
             document.getElementById(`content-${tab}`).classList.add('active');
-            document.getElementById(`tab-${tab}`).className = "flex-1 py-4 text-sm font-bold text-brand-600 border-b-2 border-brand-600 transition-colors";
             
-            // Ẩn thanh tiến độ khi chuyển tab
+            const activeBtn = document.getElementById(`tab-${tab}`);
+            activeBtn.className = "flex-1 py-3.5 text-sm font-bold rounded-2xl bg-slate-800 text-white shadow-md border border-slate-700 transition-all duration-300 relative overflow-hidden";
+            
+            if(tab === 'single') activeBtn.innerHTML = '<div class="absolute inset-0 bg-brand-500/10 opacity-0 hover:opacity-100 transition-opacity"></div><i class="fa-solid fa-link mr-2 text-brand-400"></i>Tải Lẻ (Miễn phí)';
+            if(tab === 'profile') activeBtn.innerHTML = '<div class="absolute inset-0 bg-indigo-500/10 opacity-0 hover:opacity-100 transition-opacity"></div><i class="fa-solid fa-users mr-2 text-indigo-400"></i>Tải Kênh (Giới hạn)';
+
             document.getElementById('progressContainer').classList.add('hidden');
         }
 
         function showToast(message, type = 'success') {
             const toast = document.getElementById('toast');
             document.getElementById('toast-msg').innerText = message;
-            toast.className = `toast fixed top-6 right-6 flex items-center w-full max-w-sm p-4 rounded-xl shadow-2xl text-white font-bold z-50 show ${type === 'success' ? 'bg-emerald-500' : 'bg-red-500'}`;
-            document.getElementById('toast-icon').className = `fa-solid mr-3 text-xl ${type === 'success' ? 'fa-circle-check' : 'fa-circle-exclamation'}`;
+            
+            toast.style.background = type === 'success' ? 'rgba(16, 185, 129, 0.2)' : 'rgba(244, 63, 94, 0.2)';
+            toast.style.borderColor = type === 'success' ? 'rgba(16, 185, 129, 0.3)' : 'rgba(244, 63, 94, 0.3)';
+            toast.className = `toast fixed top-6 right-6 flex items-center w-full max-w-sm p-4 rounded-2xl shadow-[0_15px_50px_rgba(0,0,0,0.6)] text-white font-bold z-50 border glass-panel show`;
+            document.getElementById('toast-icon').className = `fa-solid mr-3 text-2xl drop-shadow-md ${type === 'success' ? 'fa-circle-check text-emerald-400' : 'fa-triangle-exclamation text-rose-500'}`;
+            
             setTimeout(() => { toast.classList.remove('show'); }, 4000);
         }
 
@@ -325,14 +508,14 @@
             if (!url) return showToast('Vui lòng nhập đường dẫn video!', 'error');
 
             const btnText = document.getElementById('text-single');
-            btnText.innerHTML = '<span class="loader"></span> Đang tải...';
+            btnText.innerHTML = '<span class="relative z-10 flex items-center justify-center"><span class="loader"></span> Đang kết nối API...</span>';
             
             let apiUrl = `/api/video/download?url=${encodeURIComponent(url)}`;
             if (cookie) apiUrl += `&cookies=${encodeURIComponent(cookie)}`;
             
             triggerBrowserDownload(apiUrl);
-            showToast('Đang tạo file tải xuống...', 'success');
-            setTimeout(() => { btnText.innerHTML = '<i class="fa-solid fa-download mr-2"></i>Tải Video Ngay'; }, 3000);
+            showToast('Lệnh tải đã được gửi đến trình duyệt.', 'success');
+            setTimeout(() => { btnText.innerHTML = '<span class="relative z-10 flex items-center justify-center"><i class="fa-solid fa-download mr-2 text-lg"></i>Tiến Hành Xử Lý</span>'; }, 3000);
         }
 
         async function getProfileInfo() {
@@ -360,13 +543,12 @@
                 if (data.avatar && data.avatar !== "None") {
                     avatarImg.src = data.avatar;
                 } else {
-                    avatarImg.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(data.channel_name)}&background=10b981&color=fff&size=128`;
+                    avatarImg.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(data.channel_name)}&background=020617&color=3b82f6&size=128`;
                 }
                 
                 let maxEnd = Math.min(data.total_videos, 5);
                 document.getElementById('end-idx').value = maxEnd;
                 
-                // Hiển thị khung Kênh, Ẩn thanh tiến độ
                 document.getElementById('range-section').classList.remove('hidden');
                 document.getElementById('progressContainer').classList.add('hidden');
                 
@@ -374,7 +556,7 @@
             } catch (error) {
                 showToast(error.message, 'error');
             } finally {
-                btnText.innerHTML = 'Quét Kênh';
+                btnText.innerHTML = '<span id="text-info"><i class="fa-solid fa-radar mr-2"></i>Quét Kênh</span>';
                 document.getElementById('btn-info').disabled = false;
             }
         }
@@ -388,7 +570,7 @@
 
             if (start > end) return showToast('Số bắt đầu không được lớn hơn số kết thúc!', 'error');
             if (count > 5) {
-                return showToast('❌ BẢN MIỄN PHÍ TỐI ĐA 5 VIDEO! Mua bản PRO để không giới hạn.', 'error');
+                return showToast('BẢN MIỄN PHÍ TỐI ĐA 5 VIDEO! Mua Bản PRO để không giới hạn.', 'error');
             }
 
             const btnText = document.getElementById('text-profile-dl');
@@ -401,25 +583,24 @@
             statusList.innerHTML = '';
             for(let i=1; i<=count; i++) {
                 statusList.innerHTML += `
-                    <div id="stat-item-${i}" class="flex items-center justify-between text-xs font-bold text-slate-400 py-1.5 border-b border-slate-700">
-                        <span>Video #${start + i - 1}</span>
-                        <span class="status-icon"><i class="fa-solid fa-spinner fa-spin mr-1"></i> Đang tải...</span>
+                    <div id="stat-item-${i}" class="flex items-center justify-between text-slate-500 py-2 border-b border-slate-800/80 transition-colors">
+                        <span>> Bóc tách Video_Index_${start + i - 1}.mp4...</span>
+                        <span class="status-icon"><i class="fa-solid fa-circle-notch fa-spin mr-1 text-brand-500"></i></span>
                     </div>
                 `;
             }
 
-            // Hiện Thanh tiến độ (Không ẩn khung kênh)
             progContainer.classList.remove('hidden');
             progBar.style.width = '0%'; progPercent.innerText = '0%';
-            progText.innerText = 'Đang khởi tạo lệnh tải ZIP...';
+            progText.innerText = 'Đang khởi tạo Tunnel kết nối API...';
 
-            btnText.innerHTML = '<span class="loader"></span> Đang xử lý...';
+            btnText.innerHTML = '<span class="relative z-10 flex items-center justify-center"><span class="loader"></span> ĐANG XỬ LÝ DỮ LIỆU...</span>';
             document.getElementById('btn-profile-dl').disabled = true;
             
             let apiUrl = `/api/profile/download?url=${encodeURIComponent(url)}&start_index=${start}&end_index=${end}`;
             if (cookie) apiUrl += `&cookies=${encodeURIComponent(cookie)}`;
 
-            showToast('Đang xử lý tải ZIP, vui lòng không tắt trang web!', 'success');
+            showToast('Đang tiến hành gom ZIP, vui lòng giữ trang luôn mở!', 'success');
             
             let currentVid = 1;
             let isServerDone = false; 
@@ -429,9 +610,9 @@
 
                 if(currentVid <= count) {
                     const item = document.getElementById(`stat-item-${currentVid}`);
-                    item.classList.remove('text-slate-400');
+                    item.classList.remove('text-slate-500');
                     item.classList.add('text-emerald-400');
-                    item.querySelector('.status-icon').innerHTML = '<i class="fa-solid fa-circle-check"></i> Hoàn thành';
+                    item.querySelector('.status-icon').innerHTML = '<i class="fa-solid fa-check text-emerald-400 drop-shadow-[0_0_5px_rgba(52,211,153,0.5)]"></i> Done';
                     
                     let percent = Math.floor((currentVid / (count + 1)) * 100);
                     progBar.style.width = `${percent}%`;
@@ -443,7 +624,7 @@
                 } else {
                     progPercent.innerText = `95%`;
                     progBar.style.width = `95%`;
-                    progText.innerText = 'Đang chờ Server đóng gói và gửi file ZIP...';
+                    progText.innerText = 'Đang chờ Server nén File ZIP cuối cùng...';
                 }
             }
 
@@ -463,7 +644,7 @@
                 const downloadUrl = window.URL.createObjectURL(blob);
                 const a = document.createElement('a');
                 a.href = downloadUrl;
-                a.download = `tiktok_batch_${start}_${end}.zip`;
+                a.download = `TikFlow_Pro_Batch_${start}_${end}.zip`;
                 document.body.appendChild(a);
                 a.click();
                 document.body.removeChild(a);
@@ -471,14 +652,15 @@
 
                 for(let i=1; i<=count; i++) {
                     const item = document.getElementById(`stat-item-${i}`);
-                    item.classList.remove('text-slate-400');
+                    item.classList.remove('text-slate-500');
                     item.classList.add('text-emerald-400');
-                    item.querySelector('.status-icon').innerHTML = '<i class="fa-solid fa-circle-check"></i> Hoàn thành';
+                    item.querySelector('.status-icon').innerHTML = '<i class="fa-solid fa-check text-emerald-400 drop-shadow-[0_0_5px_rgba(52,211,153,0.5)]"></i> Done';
                 }
 
                 progBar.style.width = '100%';
                 progPercent.innerText = '100%';
-                progText.innerText = 'Hoàn tất! File ZIP đã được gửi xuống máy bạn.';
+                progText.innerText = 'Tuyệt Vời! File ZIP đã được đẩy xuống thiết bị.';
+                progText.classList.replace('text-emerald-400', 'text-emerald-300');
                 progBar.classList.remove('progress-bar-animated');
 
                 const COOLDOWN_TIME = 60; 
@@ -489,46 +671,134 @@
 
             } catch (error) {
                 isServerDone = true;
-                progText.innerText = 'Lỗi: ' + error.message;
-                progText.classList.replace('text-slate-400', 'text-red-500');
+                progText.innerText = 'LỖI HỆ THỐNG: ' + error.message;
+                progText.classList.replace('text-emerald-400', 'text-rose-500');
                 showToast(error.message, 'error');
             } finally {
                 if (!localStorage.getItem('tikflow_cooldown')) {
-                    btnText.innerHTML = '<span id="text-profile-dl"><i class="fa-solid fa-file-zipper mr-2 text-lg"></i>NÉN VÀ TẢI FILE ZIP</span>';
+                    btnText.innerHTML = '<span id="text-profile-dl" class="relative z-10 flex items-center justify-center"><i class="fa-solid fa-boxes-packing mr-2 text-lg"></i>ĐÓNG GÓI VÀ TẢI ZIP</span>';
                     document.getElementById('btn-profile-dl').disabled = false;
                 }
             }
         }
+
+        // Live Stats Simulator (Hiệu ứng Social Proof)
+        let processedCount = 12458;
+        setInterval(() => {
+            processedCount += Math.floor(Math.random() * 3) + 1;
+            const counterEl = document.getElementById('live-counter');
+            if(counterEl) counterEl.innerText = processedCount.toLocaleString();
+        }, 3500);
+
+        // HIỆU ỨNG CANVAS: Mạng Lưới Dữ Liệu (Particle Network)
+        const canvas = document.getElementById('particle-canvas');
+        const ctx = canvas.getContext('2d');
+        let width, height, particles;
+
+        // Bắt tọa độ chuột
+        let mouse = { x: null, y: null, radius: 150 };
+        window.addEventListener('mousemove', (e) => {
+            mouse.x = e.x;
+            mouse.y = e.y;
+        });
+        window.addEventListener('mouseout', () => {
+            mouse.x = null;
+            mouse.y = null;
+        });
+
+        class Particle {
+            constructor(x, y, dx, dy, size) {
+                this.x = x; this.y = y; this.dx = dx; this.dy = dy; this.size = size;
+            }
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2, false);
+                ctx.fillStyle = '#3b82f6'; // Brand-500
+                ctx.fill();
+            }
+            update() {
+                if (this.x > width || this.x < 0) this.dx = -this.dx;
+                if (this.y > height || this.y < 0) this.dy = -this.dy;
+                
+                // Tương tác chuột (Tránh chuột nhẹ)
+                if(mouse.x != null) {
+                    let dx = mouse.x - this.x;
+                    let dy = mouse.y - this.y;
+                    let distance = Math.sqrt(dx * dx + dy * dy);
+                    if(distance < mouse.radius) {
+                        const forceDirectionX = dx / distance;
+                        const forceDirectionY = dy / distance;
+                        const force = (mouse.radius - distance) / mouse.radius;
+                        this.x -= forceDirectionX * force * 2;
+                        this.y -= forceDirectionY * force * 2;
+                    }
+                }
+                
+                this.x += this.dx;
+                this.y += this.dy;
+                this.draw();
+            }
+        }
+
+        function initParticles() {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+            particles = [];
+            let numberOfParticles = (width * height) / 15000; // Mật độ hạt
+            for (let i = 0; i < numberOfParticles; i++) {
+                let size = (Math.random() * 1.5) + 0.5;
+                let x = (Math.random() * ((innerWidth - size * 2) - (size * 2)) + size * 2);
+                let y = (Math.random() * ((innerHeight - size * 2) - (size * 2)) + size * 2);
+                let dx = (Math.random() - 0.5) * 0.8;
+                let dy = (Math.random() - 0.5) * 0.8;
+                particles.push(new Particle(x, y, dx, dy, size));
+            }
+        }
+
+        function animateParticles() {
+            requestAnimationFrame(animateParticles);
+            ctx.clearRect(0, 0, innerWidth, innerHeight);
+            
+            for (let i = 0; i < particles.length; i++) {
+                particles[i].update();
+            }
+            connectParticles();
+        }
+
+        function connectParticles() {
+            let opacityValue = 1;
+            for (let a = 0; a < particles.length; a++) {
+                for (let b = a; b < particles.length; b++) {
+                    let distance = ((particles[a].x - particles[b].x) * (particles[a].x - particles[b].x)) + ((particles[a].y - particles[b].y) * (particles[a].y - particles[b].y));
+                    if (distance < (width/10) * (height/10)) {
+                        opacityValue = 1 - (distance / 20000);
+                        ctx.strokeStyle = 'rgba(59, 130, 246,' + opacityValue + ')';
+                        ctx.lineWidth = 1;
+                        ctx.beginPath();
+                        ctx.moveTo(particles[a].x, particles[a].y);
+                        ctx.lineTo(particles[b].x, particles[b].y);
+                        ctx.stroke();
+                    }
+                }
+                // Nối hạt với chuột
+                if(mouse.x != null) {
+                    let mouseDist = ((particles[a].x - mouse.x) * (particles[a].x - mouse.x)) + ((particles[a].y - mouse.y) * (particles[a].y - mouse.y));
+                    if (mouseDist < 25000) {
+                        ctx.strokeStyle = 'rgba(96, 165, 250,' + (1 - mouseDist/25000) + ')';
+                        ctx.lineWidth = 1.2;
+                        ctx.beginPath();
+                        ctx.moveTo(particles[a].x, particles[a].y);
+                        ctx.lineTo(mouse.x, mouse.y);
+                        ctx.stroke();
+                    }
+                }
+            }
+        }
+
+        window.addEventListener('resize', initParticles);
+        initParticles();
+        animateParticles();
+
     </script>
-    <footer class="mt-20 pb-12 w-full max-w-2xl border-t border-slate-200/50 pt-10">
-        <div class="flex flex-col items-center">
-            <div class="w-10 h-10 rounded-full bg-slate-900 flex items-center justify-center text-white mb-4 shadow-xl border border-slate-700">
-                <span class="font-black text-xs">LGB</span>
-            </div>
-            
-            <div class="relative px-6 py-2">
-                <div class="absolute inset-0 flex items-center">
-                    <div class="w-full border-t border-slate-300"></div>
-                </div>
-                <div class="relative flex justify-center text-xs font-black uppercase tracking-[0.4em] text-slate-400 bg-slate-50 px-4">
-                    Powered By
-                </div>
-            </div>
-            
-            <h2 class="mt-4 text-xl font-black italic tracking-tighter text-slate-900 group cursor-default">
-                <span class="text-brand-600 transition-all group-hover:text-indigo-600">LÊ GIA BẢO</span>
-            </h2>
-            
-            <div class="mt-6 flex gap-6 text-slate-400">
-                <a href="https://zalo.me/0911492568" target="_blank" class="hover:text-brand-600 transition-colors"><i class="fa-brands fa-whatsapp text-lg"></i></a>
-                <div class="w-[1px] h-4 bg-slate-300"></div>
-                <span class="text-[10px] font-bold uppercase">TikFlow Pro Ecosystem v2.0</span>
-            </div>
-            
-            <p class="mt-8 text-[9px] text-slate-300 font-bold uppercase tracking-widest">
-                &copy; 2026 - All Rights Reserved by Le Gia Bao
-            </p>
-        </div>
-    </footer>
 </body>
 </html>
